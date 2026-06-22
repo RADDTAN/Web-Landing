@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAO System Menu - Advanced Company Hub</title>
+    <title>GEH Group - Url Menu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 全局設定確保不破版 */
+        /* 全局設定 */
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        .sao-bg {
+        .WEB LANDING-bg {
             background: radial-gradient(circle at center, #4a5568 0%, #1a202c 100%);
         }
 
-        /* SAO 圓形主按鈕 */
-        .sao-circle {
+        /* WEB LANDING 圓形主按鈕 */
+        .WEB LANDING-circle {
             position: relative;
             width: 3.5rem;
             height: 3.5rem;
@@ -33,14 +33,14 @@
             z-index: 10;
             flex-shrink: 0;
         }
-        .sao-circle:hover, .sao-circle.active {
+        .WEB LANDING-circle:hover, .WEB LANDING-circle.active {
             background-color: #f59e0b;
             border-color: #f59e0b;
             box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
         }
 
-        /* SAO 矩形子選單項目 */
-        .sao-rect {
+        /* WEB LANDING 矩形子選單項目 */
+        .WEB LANDING-rect {
             padding: 0.5rem 1rem;
             background-color: rgba(240, 240, 240, 0.95);
             color: #333;
@@ -53,14 +53,14 @@
             align-items: center;
             position: relative;
         }
-        .sao-rect:last-child { border-bottom: none; }
-        .sao-rect:hover, .sao-rect.active {
+        .WEB LANDING-rect:last-child { border-bottom: none; }
+        .WEB LANDING-rect:hover, .WEB LANDING-rect.active {
             background-color: #f59e0b;
             color: white;
         }
 
         /* 左側三角形指針 */
-        .sao-pointer {
+        .WEB LANDING-pointer {
             position: absolute;
             left: -8px;
             top: 50%;
@@ -71,7 +71,7 @@
             border-bottom: 6px solid transparent;
             border-right: 8px solid rgba(240, 240, 240, 0.95);
         }
-        .sao-rect:hover .sao-pointer, .sao-rect.active .sao-pointer {
+        .WEB LANDING-rect:hover .WEB LANDING-pointer, .WEB LANDING-rect.active .WEB LANDING-pointer {
             border-right-color: #f59e0b;
         }
 
@@ -84,30 +84,30 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* SAO 風格的滾動條 */
-        .sao-scrollbar::-webkit-scrollbar { width: 6px; }
-        .sao-scrollbar::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 3px; }
-        .sao-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
-        .sao-scrollbar::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+        /* WEB LANDING 風格的滾動條 */
+        .WEB LANDING-scrollbar::-webkit-scrollbar { width: 6px; }
+        .WEB LANDING-scrollbar::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 3px; }
+        .WEB LANDING-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
+        .WEB LANDING-scrollbar::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 h-screen overflow-hidden relative">
 
     <div id="loading-view" class="absolute inset-0 bg-gray-900 z-50 flex flex-col items-center justify-center text-white">
-        <div class="text-3xl font-bold tracking-widest animate-pulse mb-4">LINK START...</div>
+        <div class="text-3xl font-bold tracking-widest animate-pulse mb-4">SYNCING...</div>
         <div class="text-sm text-gray-400">正在連接至雲端伺服器 (Google Drive)</div>
     </div>
 
-    <div id="front-view" class="h-full w-full sao-bg relative hidden">
+    <div id="front-view" class="h-full w-full WEB LANDING-bg relative hidden">
         
         <div class="relative h-full flex flex-col justify-center items-start pl-8 md:pl-32">
             
-            <div id="sao-announcement-container" class="mb-6 z-40 hidden w-[85%] max-w-sm md:max-w-md slide-in">
+            <div id="WEB LANDING-announcement-container" class="mb-6 z-40 hidden w-[85%] max-w-sm md:max-w-md slide-in">
                 <div class="bg-white/90 backdrop-blur-sm shadow-[0_0_15px_rgba(255,255,255,0.2)] border-t-4 border-blue-500 rounded-b-sm p-3 flex items-start gap-3 relative">
                     <span class="text-xl pt-1">💬</span>
                     <div>
                         <h3 class="text-blue-600 text-[10px] font-bold uppercase tracking-wider mb-0.5">ANNOUNCEMENT</h3>
-                        <p id="sao-announcement-text" class="text-sm font-medium text-gray-700 leading-snug break-words"></p>
+                        <p id="WEB LANDING-announcement-text" class="text-sm font-medium text-gray-700 leading-snug break-words"></p>
                     </div>
                 </div>
             </div>
@@ -115,21 +115,21 @@
             <div class="flex flex-col gap-8 relative z-10">
                 
                 <div class="relative group">
-                    <div id="btn-company" class="sao-circle" onclick="toggleMainMenu('company')" title="Company List">🏢</div>
+                    <div id="btn-company" class="WEB LANDING-circle" onclick="toggleMainMenu('company')" title="Company List">🏢</div>
                     
                     <div id="menu-company-wrapper" class="hidden absolute top-0 left-16 md:left-20 flex flex-col gap-3 z-20 w-56 md:w-64">
-                        <div class="bg-white/90 shadow-lg rounded-sm slide-in relative before:content-[''] before:absolute before:-left-2 before:top-5 before:border-[6px] before:border-transparent before:border-r-white/90 max-h-[35vh] overflow-y-auto sao-scrollbar w-full">
+                        <div class="bg-white/90 shadow-lg rounded-sm slide-in relative before:content-[''] before:absolute before:-left-2 before:top-5 before:border-[6px] before:border-transparent before:border-r-white/90 max-h-[35vh] overflow-y-auto WEB LANDING-scrollbar w-full">
                             <div id="company-list-container" class="flex flex-col"></div>
                         </div>
 
-                        <div id="menu-links-list" class="hidden bg-white/95 shadow-xl rounded-sm slide-in w-full max-h-[288px] overflow-y-auto sao-scrollbar border-t-4 border-orange-500 relative before:content-[''] before:absolute before:-top-2 before:left-8 before:border-[6px] before:border-transparent before:border-b-orange-500">
+                        <div id="menu-links-list" class="hidden bg-white/95 shadow-xl rounded-sm slide-in w-full max-h-[288px] overflow-y-auto WEB LANDING-scrollbar border-t-4 border-orange-500 relative before:content-[''] before:absolute before:-top-2 before:left-8 before:border-[6px] before:border-transparent before:border-b-orange-500">
                             <div id="links-list-container" class="flex flex-col"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="relative group">
-                    <div class="sao-circle" onclick="switchView('login')" title="Admin System">⚙️</div>
+                    <div class="WEB LANDING-circle" onclick="switchView('login')" title="Admin System">⚙️</div>
                 </div>
 
             </div>
@@ -158,7 +158,7 @@
     </div>
 
 
-    <div id="admin-view" class="h-full w-full flex flex-col p-2 sm:p-4 bg-gray-50 hidden overflow-y-auto overflow-x-hidden sao-scrollbar">
+    <div id="admin-view" class="h-full w-full flex flex-col p-2 sm:p-4 bg-gray-50 hidden overflow-y-auto overflow-x-hidden WEB LANDING-scrollbar">
         <div class="max-w-4xl w-full mx-auto bg-white rounded-xl shadow-lg p-4 md:p-8 my-4 md:my-8">
             <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
                 <span>⚙️ System Admin - 种类/公司管理</span>
@@ -232,8 +232,8 @@
 
         // --- 前台渲染邏輯 ---
         function renderAnnouncement() {
-            const container = document.getElementById('sao-announcement-container');
-            const textEl = document.getElementById('sao-announcement-text');
+            const container = document.getElementById('WEB LANDING-announcement-container');
+            const textEl = document.getElementById('WEB LANDING-announcement-text');
             const annText = appData.announcement;
 
             if (annText && annText.trim() !== "") {
@@ -280,8 +280,8 @@
                 const isActive = (activeCompanyIndex === index);
                 
                 const rectHTML = `
-                    <div class="sao-rect ${isActive ? 'active' : ''}" onclick="toggleSubMenu2(${index}, event)">
-                        <div class="sao-pointer"></div>
+                    <div class="WEB LANDING-rect ${isActive ? 'active' : ''}" onclick="toggleSubMenu2(${index}, event)">
+                        <div class="WEB LANDING-pointer"></div>
                         <span class="truncate w-full pr-2" title="${comp.name}">${comp.name}</span>
                         <div class="flex items-center gap-1 shrink-0">
                             <span class="text-[10px] bg-gray-200 text-gray-600 px-1.5 rounded-full ${isActive ? 'text-gray-800' : ''}">${comp.links.length}</span>
@@ -395,7 +395,7 @@
             row.className = 'link-row flex flex-wrap gap-2 items-center bg-white p-2 border border-gray-200 rounded w-full';
             row.innerHTML = `
                 <input type="text" placeholder="顯示名稱" value="${title}" required class="link-title flex-1 min-w-[120px] w-full md:w-auto border border-gray-300 p-1.5 rounded text-sm focus:border-orange-500 focus:outline-none">
-                <input type="url" placeholder="網址 (https://...)" value="${url}" required class="link-url flex-[2] min-w-[180px] w-full md:w-auto border border-gray-300 p-1.5 rounded text-sm focus:border-orange-500 focus:outline-none">
+                <input type="text" placeholder="網址 (https://...)" value="${url}" required class="link-url flex-[2] min-w-[180px] w-full md:w-auto border border-gray-300 p-1.5 rounded text-sm focus:border-orange-500 focus:outline-none">
                 <button type="button" onclick="this.parentElement.remove()" class="text-gray-400 hover:text-red-500 p-1 font-bold ml-auto" title="移除">✕</button>
             `;
             container.appendChild(row);
@@ -474,7 +474,7 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.setAttribute("href", url);
-            link.setAttribute("download", "sao_hub_template.csv");
+            link.setAttribute("download", "WEB LANDING_hub_template.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
