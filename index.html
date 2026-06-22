@@ -1,1 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEH Group | Url Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: #f8fafc; }
+        
+        /* 乾淨的滾動條 */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
+        /* 淡入動畫 */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden relative">
+
+    <div id="loading-view" class="absolute inset-0 bg-white z-50 flex flex-col items-center justify-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <div class="text-slate-500 font-medium tracking-wide">Loading GEH Group Data...</div>
+    </div>
+
+    <header id="top-nav" class="bg-blue-700 text-white shadow-md z-20 shrink-0 hidden">
+        <div class="max-w-6xl mx-auto px-4 md:px-6 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🌐</span>
+                <h1 class="text-xl font-bold tracking-wider">GEH Group <span class="font-light text-blue-200">Url Hub</span></h1>
+            </div>
+            <button onclick="switchView('login')" class="flex items-center gap-2 text-sm font-medium text-blue-100 hover:text-white hover:bg-blue-600 px-3 py-2 rounded transition">
+                ⚙️ Admin
+            </button>
+        </div>
+    </header>
+
+    <main id="front-view" class="flex-1 overflow-y-auto hidden custom-scrollbar">
+        <div class="max-w-6xl mx-auto px-4 md:px-6 py-6 flex flex-col gap-6">
+            
+            <div id="announcement-container" class="hidden fade-in">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r shadow-sm flex items-start gap-3">
+                    <span class="text-blue-500 text-xl leading-none">📢</span>
+                    <div>
+                        <h3 class="text-blue-800 font-bold text-xs uppercase tracking-wider mb-1">Announcement</h3>
+                        <p id="announcement-text" class="text-sm text-blue-900 leading-relaxed break-words"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-6 items-start">
+                
+                <div class="w-full md:w-1/3 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden shrink-0">
+                    <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 font-bold text-slate-700 flex justify-between items-center">
+                        <span>🏢 Companies</span>
+                    </div>
+                    <div id="company-list-container" class="flex flex-col max-h-[40vh] md:max-h-[65vh] overflow-y-auto custom-scrollbar">
+                        </div>
+                </div>
+
+                <div id="links-panel" class="w-full md:w-2/3 flex flex-col gap-3 hidden fade-in">
+                    <h2 id="selected-company-name" class="text-lg font-bold text-slate-700 flex items-center gap-2 px-1">
+                        </h2>
+                    <div id="links-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] md:max-h-[65vh] overflow-y-auto custom-scrollbar p-1">
+                        </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+
+    <div id="login-view" class="flex-1 flex items-center justify-center p-4 bg-slate-100 hidden">
+        <div class="max-w-sm w-full bg-white rounded-xl shadow-lg p-8 border border-slate-200">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Admin Login</h2>
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Admin ID</label>
+                    <input type="text" id="login-username" required class="block w-full rounded-md border-slate-300 shadow-sm border p-2.5 focus:border-blue-500 focus:ring-blue-500 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                    <input type="password" id="login-password" required class="block w-full rounded-md border-slate-300 shadow-sm border p-2.5 focus:border-blue-500 focus:ring-blue-500 outline-none transition">
+                </div>
+                <div class="pt-2 flex justify-between items-center">
+                    <button type="button" onclick="switchView('front')" class="text-slate-500 hover:text-slate-800 text-sm font-medium transition">&larr; Cancel</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow transition">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="admin-view" class="flex-1 flex flex-col bg-slate-50 hidden overflow-y-auto custom-scrollbar">
+        <div class="max-w-5xl w-full mx-auto p-4 md:p-8">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-4 flex justify-between items-center">
+                    <span>⚙️ GEH Group - Admin Panel</span>
+                </h2>
+
+                <form id="admin-form" class="space-y-8">
+                    <div class="bg-blue-50 rounded-lg border border-blue-100 p-5">
+                        <label class="block text-sm font-bold text-blue-800 mb-2">📢 Top Announcement (公告)</label>
+                        <textarea id="admin-announcement" rows="2" placeholder="Enter announcement here... (Leave blank to hide)" class="w-full border border-slate-300 rounded-md p-3 focus:ring-blue-500 focus:border-blue-500 text-sm outline-none transition"></textarea>
+                    </div>
+                
+                    <div class="bg-slate-50 rounded-lg border border-slate-200 p-5">
+                        <label class="block text-sm font-bold text-slate-700 mb-3">📊 CSV Batch Processing</label>
+                        <div class="flex flex-wrap gap-3 items-center">
+                            <button type="button" onclick="downloadCSV()" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-sm font-medium py-2 px-4 rounded shadow-sm transition">
+                                📥 Download Template
+                            </button>
+                            <label class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium py-2 px-4 rounded shadow-sm transition cursor-pointer inline-block">
+                                📤 Upload & Merge CSV
+                                <input type="file" accept=".csv" class="hidden" onchange="uploadCSV(event)">
+                            </label>
+                            <span class="text-xs text-slate-500 ml-2">※ Uploading will MERGE data. Existing records not in CSV will be kept.</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="block text-lg font-bold text-slate-800">🏢 Corporate Structure (Companies & Links)</label>
+                            <button type="button" onclick="addCompanyCard()" class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm py-2 px-4 rounded font-bold transition">
+                                + Add Company
+                            </button>
+                        </div>
+                        <div id="admin-companies-container" class="space-y-6 w-full"></div>
+                    </div>
+
+                    <div class="pt-6 mt-8 border-t border-slate-200 flex justify-between items-center sticky bottom-0 bg-white py-4 shadow-[0_-15px_15px_-10px_rgba(0,0,0,0.05)] -mx-6 md:-mx-8 px-6 md:px-8 z-10">
+                        <button type="button" onclick="switchView('front')" class="text-slate-500 hover:text-slate-800 font-medium text-sm md:text-base transition">&larr; Back to Hub</button>
+                        <button id="save-btn" type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 md:py-3 px-6 md:px-10 rounded shadow-md transition text-base md:text-lg">
+                            Save All Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // 綁定 Google Apps Script 網址
+        const GOOGLE_API_URL = 'https://script.google.com/macros/s/AKfycbyeXrnekShV68CQgAPXh7BwPH7lkwExi-VHj2p4Xqtr6eHGcLcMEGLu3hdzROw-icV8hA/exec';
+
+        // 管理員密碼
+        const ADMIN_USER = "Radd";
+        const ADMIN_PASS = "1016";
+
+        // 狀態控制
+        let appData = { announcement: "", companies: [] };
+        let activeCompanyIndex = null;
+
+        // --- 從 Google Drive 讀取資料 ---
+        async function fetchFromGoogle() {
+            try {
+                const response = await fetch(GOOGLE_API_URL);
+                const data = await response.json();
+                if (data) {
+                    appData = {
+                        announcement: data.announcement || "",
+                        companies: data.companies || []
+                    };
+                }
+            } catch (err) {
+                console.error("載入失敗：", err);
+                appData = { announcement: "Unable to connect to GEH database. Please try again later.", companies: [] };
+            }
+        }
+
+        // --- 前台渲染邏輯 ---
+        function renderAnnouncement() {
+            const container = document.getElementById('announcement-container');
+            const textEl = document.getElementById('announcement-text');
+            const annText = appData.announcement;
+
+            if (annText && annText.trim() !== "") {
+                textEl.innerText = annText;
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function selectCompany(index) {
+            activeCompanyIndex = index;
+            renderFront();
+        }
+
+        function renderFront() {
+            renderAnnouncement();
+            
+            const companyContainer = document.getElementById('company-list-container');
+            const linksPanel = document.getElementById('links-panel');
+            const linksContainer = document.getElementById('links-list-container');
+            const companyNameLabel = document.getElementById('selected-company-name');
+            
+            companyContainer.innerHTML = '';
+            linksContainer.innerHTML = '';
+
+            // 渲染左側公司列表
+            appData.companies.forEach((comp, index) => {
+                const isActive = (activeCompanyIndex === index);
+                
+                const btnHTML = `
+                    <button onclick="selectCompany(${index})" class="w-full text-left px-5 py-3.5 border-b border-slate-100 last:border-0 transition-colors flex justify-between items-center group ${isActive ? 'bg-blue-600 text-white shadow-inner' : 'text-slate-700 hover:bg-slate-50'}">
+                        <span class="font-medium truncate pr-2 ${isActive ? '' : 'group-hover:text-blue-600 transition-colors'}">${comp.name}</span>
+                        <span class="text-xs font-bold py-0.5 px-2.5 rounded-full ${isActive ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600 group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors'}">${comp.links.length}</span>
+                    </button>
+                `;
+                companyContainer.innerHTML += btnHTML;
+            });
+
+            // 渲染右側連結面板
+            if (activeCompanyIndex !== null && appData.companies[activeCompanyIndex]) {
+                const activeComp = appData.companies[activeCompanyIndex];
+                companyNameLabel.innerHTML = `<span>🔗</span> ${activeComp.name} Links`;
+                
+                if (activeComp.links.length > 0) {
+                    activeComp.links.forEach(link => {
+                        linksContainer.innerHTML += `
+                            <a href="${link.url}" target="_blank" class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-md hover:bg-blue-50 transition-all group">
+                                <span class="font-semibold text-slate-800 group-hover:text-blue-700 truncate pr-2">${link.title}</span>
+                                <span class="text-slate-300 group-hover:text-blue-500 transition-colors">➔</span>
+                            </a>
+                        `;
+                    });
+                } else {
+                    linksContainer.innerHTML = `<div class="p-4 text-slate-400 text-sm">No links available for this company.</div>`;
+                }
+                
+                linksPanel.classList.remove('hidden');
+            } else {
+                linksPanel.classList.add('hidden');
+            }
+        }
+
+        // --- 畫面切換 ---
+        function switchView(view) {
+            document.getElementById('loading-view').classList.add('hidden');
+            document.getElementById('front-view').classList.add('hidden');
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.add('hidden');
+            document.getElementById('top-nav').classList.add('hidden');
+
+            if (view === 'login') {
+                document.getElementById('top-nav').classList.remove('hidden');
+                document.getElementById('login-view').classList.remove('hidden');
+                document.getElementById('login-username').value = '';
+                document.getElementById('login-password').value = '';
+            } else if (view === 'admin') {
+                document.getElementById('admin-view').classList.remove('hidden');
+                renderAdmin(); 
+            } else {
+                document.getElementById('top-nav').classList.remove('hidden');
+                document.getElementById('front-view').classList.remove('hidden');
+                renderFront(); 
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (document.getElementById('login-username').value === ADMIN_USER && 
+                document.getElementById('login-password').value === ADMIN_PASS) {
+                switchView('admin');
+            } else {
+                alert("❌ Invalid Admin ID or Password!");
+            }
+        });
+
+        // --- 後台管理 ---
+        function renderAdmin() {
+            document.getElementById('admin-announcement').value = appData.announcement !== undefined ? appData.announcement : "";
+
+            const container = document.getElementById('admin-companies-container');
+            container.innerHTML = '';
+            
+            if (appData.companies.length === 0) {
+                addCompanyCard();
+            } else {
+                appData.companies.forEach(comp => addCompanyCard(comp));
+            }
+        }
+
+        function addCompanyCard(compData = { name: '', links: [{ title: '', url: '' }] }) {
+            const container = document.getElementById('admin-companies-container');
+            const card = document.createElement('div');
+            card.className = "company-card bg-white border border-slate-200 rounded-xl p-4 md:p-6 relative shadow-sm w-full";
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-3 gap-2 border-b border-slate-100 pb-3">
+                    <label class="block text-sm font-bold text-slate-800">Company Name</label>
+                    <button type="button" onclick="this.closest('.company-card').remove()" class="text-slate-400 hover:text-red-500 transition font-bold text-xs md:text-sm bg-slate-50 hover:bg-red-50 px-2 py-1 rounded">✕ Remove</button>
+                </div>
+                <input type="text" class="company-name w-full border border-slate-300 rounded-md p-2.5 mb-5 focus:ring-blue-500 focus:border-blue-500 font-bold outline-none transition" value="${compData.name}" placeholder="e.g. GEH Tech..." required>
+                
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Links</label>
+                    <div class="links-container space-y-2"></div>
+                    <button type="button" class="mt-4 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 py-2 px-3 rounded flex items-center gap-1 transition" onclick="addLinkRow(this.previousElementSibling)">
+                        + Add New Link
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(card);
+            
+            const linksContainer = card.querySelector('.links-container');
+            if(compData.links && compData.links.length > 0) {
+                compData.links.forEach(link => addLinkRow(linksContainer, link.title, link.url));
+            } else {
+                addLinkRow(linksContainer); 
+            }
+        }
+
+        function addLinkRow(container, title = '', url = '') {
+            const row = document.createElement('div');
+            row.className = 'link-row flex flex-wrap gap-2 items-center bg-white p-2 border border-slate-200 rounded-md w-full';
+            row.innerHTML = `
+                <input type="text" placeholder="Title (e.g. Portal)" value="${title}" required class="link-title flex-1 min-w-[120px] w-full md:w-auto border border-slate-300 p-2 rounded text-sm focus:border-blue-500 outline-none transition">
+                <input type="text" placeholder="URL (e.g. 192.168.1.1 or https://...)" value="${url}" required class="link-url flex-[2] min-w-[180px] w-full md:w-auto border border-slate-300 p-2 rounded text-sm focus:border-blue-500 outline-none transition">
+                <button type="button" onclick="this.parentElement.remove()" class="text-slate-400 hover:text-red-500 p-1.5 font-bold ml-auto hover:bg-red-50 rounded transition" title="Remove Link">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        // 儲存資料至 Google Drive
+        document.getElementById('admin-form').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            
+            const btn = document.getElementById('save-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "☁️ Saving to Server...";
+            btn.disabled = true;
+
+            const announcementText = document.getElementById('admin-announcement').value.trim();
+            const cards = document.querySelectorAll('.company-card');
+            const newCompanies = [];
+            
+            cards.forEach(card => {
+                const name = card.querySelector('.company-name').value.trim();
+                if (!name) return; 
+                
+                const linkRows = card.querySelectorAll('.link-row');
+                const links = [];
+                
+                linkRows.forEach(row => {
+                    const title = row.querySelector('.link-title').value.trim();
+                    const url = row.querySelector('.link-url').value.trim();
+                    if (title && url) links.push({ title, url });
+                });
+
+                if(links.length > 0) {
+                    newCompanies.push({ name, links });
+                }
+            });
+
+            const finalData = { announcement: announcementText, companies: newCompanies };
+
+            try {
+                await fetch(GOOGLE_API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(finalData)
+                });
+                
+                appData = finalData; 
+                if (appData.companies.length > 0) activeCompanyIndex = 0; // 儲存後重置選取第一間公司
+                alert("✅ Database successfully updated!");
+                switchView('front');
+            } catch (err) {
+                alert("❌ Failed to save: " + err.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // --- CSV 處理 (帶有合併邏輯) ---
+        function downloadCSV() {
+            // 從畫面上的表單抓取最新狀態下載 (而不是舊的 appData)
+            const cards = document.querySelectorAll('.company-card');
+            const headers = ["Company", "LinkTitle", "URL"];
+            const rows = [];
+
+            cards.forEach(card => {
+                const cName = card.querySelector('.company-name').value.trim().replace(/"/g, '""');
+                const linkRows = card.querySelectorAll('.link-row');
+                linkRows.forEach(row => {
+                    const lTitle = row.querySelector('.link-title').value.trim().replace(/"/g, '""');
+                    const lUrl = row.querySelector('.link-url').value.trim().replace(/"/g, '""');
+                    if (cName && lTitle && lUrl) {
+                        rows.push(`"${cName}","${lTitle}","${lUrl}"`);
+                    }
+                });
+            });
+
+            const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "GEH_Hub_Template.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function uploadCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = parseCSV(text);
+
+                if (lines.length < 2) {
+                    alert("❌ Invalid CSV format!");
+                    event.target.value = '';
+                    return;
+                }
+
+                // 詢問使用者是否合併資料
+                const confirmMerge = confirm("📥 Do you want to merge the CSV data with the current list?\n\n(Existing records NOT in the CSV will be KEPT. Only matching items will be updated or new items added.)");
+                if (!confirmMerge) {
+                    event.target.value = '';
+                    return;
+                }
+
+                // 解析 CSV 資料成 Map 格式
+                const csvMap = {};
+                for (let i = 1; i < lines.length; i++) {
+                    const row = lines[i];
+                    if (row.length >= 3 && row[0].trim() !== '') {
+                        const compName = row[0].trim();
+                        const linkTitle = row[1].trim();
+                        const linkUrl = row[2].trim();
+                        
+                        if (linkTitle && linkUrl) {
+                            if (!csvMap[compName]) csvMap[compName] = [];
+                            csvMap[compName].push({ title: linkTitle, url: linkUrl });
+                        }
+                    }
+                }
+
+                // 讀取當前畫面上的所有公司與連結資料作為基底
+                const currentCards = document.querySelectorAll('.company-card');
+                const mergedMap = {};
+
+                currentCards.forEach(card => {
+                    const name = card.querySelector('.company-name').value.trim();
+                    if (!name) return;
+                    
+                    if (!mergedMap[name]) mergedMap[name] = [];
+                    
+                    const linkRows = card.querySelectorAll('.link-row');
+                    linkRows.forEach(row => {
+                        const title = row.querySelector('.link-title').value.trim();
+                        const url = row.querySelector('.link-url').value.trim();
+                        if (title && url) {
+                            mergedMap[name].push({ title, url });
+                        }
+                    });
+                });
+
+                // 將 CSV 的資料合併進 mergedMap
+                for (const compName in csvMap) {
+                    if (!mergedMap[compName]) {
+                        // 若是新公司，直接整包加入
+                        mergedMap[compName] = [...csvMap[compName]];
+                    } else {
+                        // 若公司已存在，逐一檢查連結
+                        csvMap[compName].forEach(csvLink => {
+                            const existingIndex = mergedMap[compName].findIndex(l => l.title === csvLink.title);
+                            if (existingIndex !== -1) {
+                                // 標題相同，更新網址
+                                mergedMap[compName][existingIndex].url = csvLink.url;
+                            } else {
+                                // 標題不同，當作新連結加入
+                                mergedMap[compName].push(csvLink);
+                            }
+                        });
+                    }
+                }
+
+                // 將合併後的 Map 轉回陣列格式
+                const finalCompanies = Object.keys(mergedMap).map(key => {
+                    return { name: key, links: mergedMap[key] };
+                });
+
+                if (finalCompanies.length === 0) {
+                    alert("❌ No valid data found to merge!");
+                    return;
+                }
+
+                // 重新渲染後台表單
+                const container = document.getElementById('admin-companies-container');
+                container.innerHTML = '';
+                finalCompanies.forEach(comp => addCompanyCard(comp));
+
+                alert(`✅ Successfully merged CSV data!\n\nPlease review the list below and click "Save All Changes" to save to the database.`);
+                event.target.value = ''; 
+            };
+            reader.readAsText(file, "UTF-8");
+        }
+
+        function parseCSV(text) {
+            const lines = [];
+            let row = [""];
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                let c = text[i];
+                let next = text[i+1];
+                if (c === '"') {
+                    if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; } 
+                    else { inQuotes = !inQuotes; }
+                } else if (c === ',' && !inQuotes) {
+                    row.push('');
+                } else if ((c === '\r' || c === '\n') && !inQuotes) {
+                    if (c === '\r' && next === '\n') { i++; }
+                    if (row.join('') !== '') lines.push(row);
+                    row = [''];
+                } else {
+                    row[row.length - 1] += c;
+                }
+            }
+            if (row.join('') !== '') lines.push(row);
+            return lines;
+        }
+
+        // ================= 系統啟動 =================
+        async function bootSystem() {
+            await fetchFromGoogle(); 
+            // 預設自動選取第一家公司展開，減少點擊次數
+            if (appData.companies.length > 0) activeCompanyIndex = 0;
+            switchView('front');     
+        }
+        
+        bootSystem();
+
+    </script>
+</body>
+</html>
